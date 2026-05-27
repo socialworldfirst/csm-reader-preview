@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>China Sourcing Map | WorldFirst</title>
+<style>
+:root{
+  --wf-red:#FF0051; --wf-red-hover:#E0004A;
+  --purple-deep:#13002D; --purple-mid:#2D1052;
+  --text:#1F2323; --text-secondary:#484F56; --text-muted:#69727D;
+  --bg:#FFFFFF; --bg-warm:#FAF9F5; --border:#ECEDEE;
+  --reader-bg:#3a3a3a;
+  --sys:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--sys);background:#F5F5F5;color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--sys);cursor:pointer;border:none;background:none;color:inherit}
+
+/* Prototype banner (delete in Framer) */
+.proto-banner{background:#1F2323;color:#fff;font-size:12px;text-align:center;padding:8px 14px;flex-shrink:0}
+.proto-banner b{color:#FF7AA8}
+.proto-banner a{color:#FF7AA8;text-decoration:underline;margin:0 4px}
+
+/* Header */
+.page-head{padding:14px 22px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.logo-mark{width:28px;height:28px;background:var(--wf-red);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px}
+.logo-text{font-weight:600;font-size:15px}
+.page-head-meta{margin-left:auto;font-size:12px;color:var(--text-muted)}
+
+/* Chapter strip */
+.chapter-strip{padding:9px 22px;background:var(--bg-warm);border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text-secondary);display:flex;align-items:center;gap:9px;flex-shrink:0}
+.chapter-strip .dot{width:5px;height:5px;border-radius:50%;background:var(--wf-red)}
+.chapter-strip b{color:var(--text);font-weight:600}
+
+/* Custom reader toolbar — only the controls we want */
+.reader-bar{background:#fff;border-bottom:1px solid var(--border);padding:8px 14px;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;font-size:13px;color:var(--text-secondary)}
+.reader-bar button{padding:6px 9px;border-radius:6px;color:var(--text-secondary);transition:background .15s ease,color .15s ease;display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.reader-bar button:hover:not(:disabled){background:#F0F0F0;color:var(--text)}
+.reader-bar button:disabled{opacity:.35;cursor:not-allowed}
+.reader-bar svg{width:16px;height:16px;display:block}
+.reader-bar .divider{width:1px;height:18px;background:var(--border);margin:0 6px}
+.reader-bar .page-input{width:48px;text-align:center;padding:5px 4px;border:1px solid var(--border);border-radius:6px;font-family:ui-monospace,Menlo,Monaco,monospace;font-size:12.5px;color:var(--text);outline:none}
+.reader-bar .page-input:focus{border-color:var(--wf-red)}
+.reader-bar .page-total{color:var(--text-muted);font-family:ui-monospace,Menlo,Monaco,monospace;font-size:12.5px;margin-left:1px}
+
+/* Reader area */
+.reader{flex:1;min-height:0;background:var(--reader-bg);overflow:auto;padding:24px 16px 96px;display:flex;justify-content:center;align-items:flex-start;position:relative}
+.reader-canvas-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+#pdf-canvas{display:block;box-shadow:0 14px 40px rgba(0,0,0,.4);background:#fff;max-width:100%;height:auto}
+
+/* Loading + error states */
+.reader-state{color:rgba(255,255,255,.7);font-size:14px;text-align:center;padding:60px 20px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.spinner{width:28px;height:28px;border:2.5px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* STICKY CTA */
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);box-shadow:0 -4px 24px rgba(0,0,0,.1);padding:13px 20px;display:flex;align-items:center;gap:14px;z-index:100}
+.sticky-cta-text{flex:1;min-width:0;font-size:14px;font-weight:500;color:var(--text);line-height:1.4}
+.sticky-cta-text .accent{color:var(--wf-red);font-weight:600}
+.sticky-cta-btn{flex-shrink:0;background:var(--wf-red);color:#fff;font-weight:600;font-size:14px;padding:11px 22px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;text-decoration:none;transition:all .2s ease;white-space:nowrap}
+.sticky-cta-btn:hover{background:var(--wf-red-hover);transform:translateY(-1px);box-shadow:0 6px 18px rgba(255,0,81,.32)}
+
+@media(max-width:640px){
+  .page-head-meta{display:none}
+  .chapter-strip{padding:8px 16px;font-size:12px}
+  .reader-bar{padding:7px 10px;gap:4px;font-size:12px}
+  .reader-bar .divider{margin:0 3px}
+  .reader{padding:14px 8px 108px}
+  .sticky-cta{padding:11px 14px;gap:10px;flex-wrap:wrap}
+  .sticky-cta-text{font-size:13px;flex:1 1 100%;order:1}
+  .sticky-cta-btn{flex:1 1 100%;justify-content:center;order:2;padding:12px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="proto-banner">
+  PDF.js viewer · no download/print/Drive buttons · sticky CTA contextual by URL:
+  <a href="?chapter=guangzhou">guangzhou</a>·<a href="?chapter=shenzhen">shenzhen</a>·<a href="?chapter=foshan">foshan</a>·<a href="?chapter=yiwu">yiwu</a>·<a href="?chapter=canton-fair">canton-fair</a>·<a href="?chapter=1688">1688</a>·<a href="./">default</a>
+</div>
+
+<header class="page-head">
+  <div class="logo-mark">W</div>
+  <div class="logo-text">WorldFirst</div>
+  <div class="page-head-meta">China Sourcing Map · 2026 Edition · 328 pages</div>
+</header>
+
+<div class="chapter-strip">
+  <span class="dot"></span>
+  <span>You're reading: <b id="chapter-label">The full map</b></span>
+</div>
+
+<!-- Custom reader toolbar — only the controls we actually want -->
+<div class="reader-bar">
+  <button id="btn-prev" title="Previous page" aria-label="Previous page">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <input id="page-input" class="page-input" type="text" value="1" inputmode="numeric" aria-label="Current page">
+  <span class="page-total">/ <span id="page-total">—</span></span>
+  <button id="btn-next" title="Next page" aria-label="Next page">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <span class="divider"></span>
+  <button id="btn-zoom-out" title="Zoom out" aria-label="Zoom out">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/><path d="M8 11h6M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <button id="btn-zoom-in" title="Zoom in" aria-label="Zoom in">
+    <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/><path d="M8 11h6M11 8v6M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <button id="btn-fit" title="Fit to width" aria-label="Fit to width">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+</div>
+
+<!-- Reader -->
+<div class="reader" id="reader">
+  <div class="reader-state" id="reader-loading">
+    <div class="spinner"></div>
+    <div>Loading the map…</div>
+  </div>
+  <div class="reader-canvas-wrap" id="canvas-wrap" style="display:none">
+    <canvas id="pdf-canvas"></canvas>
+  </div>
+</div>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta" id="sticky-cta">
+  <div class="sticky-cta-text" id="cta-text">
+    <span class="accent">Pay your Chinese supplier same-day</span> with WorldFirst
+  </div>
+  <a href="#" class="sticky-cta-btn" id="cta-btn" target="_blank" rel="noopener">
+    Learn more
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
+<!-- PDF.js from CDN (ES module build) -->
+<script type="module">
+import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
+
+/* ===== CHAPTER MAP =====
+   Page numbers are ESTIMATES. Verify in the final PDF before launch. */
+const CHAPTER_MAP = {
+  "default": { label:"The full map", page:1, copy:'<span class="accent">Pay your Chinese supplier same-day</span> with WorldFirst', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=default" },
+  "payment": { label:"Payment rails by city", page:280, copy:'Get <span class="accent">the right payment rail</span> for your city. Pay direct with WorldFirst.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=payment" },
+  "canton-fair": { label:"Canton Fair area", page:195, copy:'Heading to Canton Fair? Pay suppliers <span class="accent">same-day</span>, before you leave the venue.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=canton-fair" },
+  "supplier-verification": { label:"Supplier verification", page:310, copy:'Every WorldFirst payment is <span class="accent">verified against business registration</span>.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=supplier-verification" },
+  "1688": { label:"Paying via 1688", page:270, copy:'Pay 1688 suppliers <span class="accent">direct in yuan</span>. No agent, no markup.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=1688" },
+  "guangzhou": { label:"Guangzhou", page:187, copy:'Sourcing from Guangzhou? Pay your supplier <span class="accent">same-day, factory direct</span>.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=guangzhou" },
+  "shenzhen": { label:"Shenzhen", page:222, copy:'Sourcing electronics from Shenzhen? Pay factories <span class="accent">direct in yuan</span>.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=shenzhen" },
+  "yiwu": { label:"Yiwu", page:100, copy:'Yiwu = 1688 territory. Pay 1688 suppliers <span class="accent">direct in yuan</span> with WorldFirst.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=yiwu" },
+  "foshan": { label:"Foshan", page:240, copy:'Buying furniture from Foshan? <span class="accent">Skip the trader markup</span>, pay factories direct.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=foshan" },
+  "dongguan": { label:"Dongguan", page:250, copy:'Sourcing from Dongguan? Pay factories <span class="accent">same-day</span>, before production starts.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=dongguan" },
+  "zhongshan": { label:"Zhongshan", page:255, copy:'Buying lighting from Zhongshan? Pay direct, <span class="accent">no trading-company middleman</span>.', url:"https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=stickycta&utm_campaign=csm_redistribution&utm_content=zhongshan" }
+};
+
+const params = new URLSearchParams(window.location.search);
+const chapter = (params.get('chapter') || 'default').toLowerCase();
+const cfg = CHAPTER_MAP[chapter] || CHAPTER_MAP['default'];
+
+document.getElementById('cta-text').innerHTML = cfg.copy;
+document.getElementById('cta-btn').setAttribute('href', cfg.url);
+document.getElementById('chapter-label').textContent = cfg.label;
+
+document.getElementById('cta-btn').addEventListener('click', () => {
+  const eventData = { chapter, page: state.pageNum, cta_copy: cfg.copy.replace(/<[^>]+>/g,''), destination: cfg.url };
+  console.log('[CSM CTA click]', eventData);
+  if (typeof fbq !== 'undefined') fbq('trackCustom', 'CSM_StickyCTA_Click', eventData);
+  if (typeof gtag !== 'undefined') gtag('event', 'csm_sticky_cta_click', eventData);
+});
+
+/* ===== PDF.js viewer ===== */
+const state = { pdf: null, pageNum: cfg.page, zoom: 1.0, fitWidth: true, rendering: false, queuedPage: null };
+const canvas = document.getElementById('pdf-canvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvas-wrap');
+const loading = document.getElementById('reader-loading');
+const pageInput = document.getElementById('page-input');
+const pageTotal = document.getElementById('page-total');
+
+async function loadPdf() {
+  try {
+    const task = pdfjsLib.getDocument('assets/csm.pdf');
+    state.pdf = await task.promise;
+    pageTotal.textContent = state.pdf.numPages;
+    loading.style.display = 'none';
+    wrap.style.display = 'flex';
+    if (state.pageNum > state.pdf.numPages) state.pageNum = 1;
+    await renderPage(state.pageNum);
+  } catch (e) {
+    loading.innerHTML = '<div>Couldn\'t load the map. <br><small style="opacity:.6">' + e.message + '</small></div>';
+    console.error(e);
+  }
+}
+
+async function renderPage(num) {
+  if (state.rendering) { state.queuedPage = num; return; }
+  state.rendering = true;
+  try {
+    const page = await state.pdf.getPage(num);
+    const reader = document.getElementById('reader');
+    const availableWidth = reader.clientWidth - 32;
+    const baseViewport = page.getViewport({ scale: 1.0 });
+    let scale = state.fitWidth ? Math.min(availableWidth / baseViewport.width, 2.2) : state.zoom;
+    const viewport = page.getViewport({ scale });
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.floor(viewport.width * dpr);
+    canvas.height = Math.floor(viewport.height * dpr);
+    canvas.style.width = Math.floor(viewport.width) + 'px';
+    canvas.style.height = Math.floor(viewport.height) + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    state.pageNum = num;
+    pageInput.value = num;
+  } finally {
+    state.rendering = false;
+    if (state.queuedPage !== null) {
+      const next = state.queuedPage; state.queuedPage = null; renderPage(next);
+    }
+  }
+}
+
+/* Controls */
+document.getElementById('btn-prev').onclick = () => { if (state.pageNum > 1) renderPage(state.pageNum - 1); };
+document.getElementById('btn-next').onclick = () => { if (state.pdf && state.pageNum < state.pdf.numPages) renderPage(state.pageNum + 1); };
+document.getElementById('btn-zoom-in').onclick = () => { state.fitWidth = false; state.zoom = Math.min(state.zoom * 1.2, 3.0); renderPage(state.pageNum); };
+document.getElementById('btn-zoom-out').onclick = () => { state.fitWidth = false; state.zoom = Math.max(state.zoom / 1.2, 0.4); renderPage(state.pageNum); };
+document.getElementById('btn-fit').onclick = () => { state.fitWidth = true; renderPage(state.pageNum); };
+pageInput.addEventListener('change', e => {
+  const n = parseInt(e.target.value, 10);
+  if (!isNaN(n) && state.pdf && n >= 1 && n <= state.pdf.numPages) renderPage(n);
+  else pageInput.value = state.pageNum;
+});
+
+/* Keyboard nav */
+window.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); if (state.pageNum > 1) renderPage(state.pageNum - 1); }
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); if (state.pdf && state.pageNum < state.pdf.numPages) renderPage(state.pageNum + 1); }
+});
+
+/* Resize redraw (debounced) */
+let resizeT;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeT);
+  resizeT = setTimeout(() => { if (state.pdf && state.fitWidth) renderPage(state.pageNum); }, 150);
+});
+
+loadPdf();
+</script>
+
+</body>
+</html>
