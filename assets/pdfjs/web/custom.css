@@ -1,0 +1,63 @@
+/* WF custom overrides — hide download/print/open-file + annotation/editing tools */
+#downloadButton,
+#printButton,
+#openFile,
+#secondaryDownload,
+#secondaryPrint,
+#secondaryOpenFile,
+#viewBookmark,
+#secondaryViewBookmark,
+#editorHighlight,
+#editorFreeText,
+#editorInk,
+#editorStamp,
+#editorModeButtons,
+#editorModeSeparator,
+#presentationMode,
+#secondaryPresentationMode,
+#documentProperties,
+#cursorHandTool,
+#cursorSelectTool,
+#scrollPage,
+#scrollVertical,
+#scrollHorizontal,
+#scrollWrapped,
+#spreadNone,
+#spreadOdd,
+#spreadEven,
+#firstPage,
+#lastPage,
+#pageRotateCw,
+#pageRotateCcw,
+#secondaryToolbarToggle {
+  display: none !important;
+}
+
+/* Hide the menubar's "Open file" affordance + tighten toolbar */
+.toolbarButton.openFile,
+.toolbarButton.print,
+.toolbarButton.download {
+  display: none !important;
+}
+
+/* Brand the toolbar background subtly */
+.toolbar {
+  background: #1F2323 !important;
+  border-bottom: 1px solid #2a2a2a !important;
+}
+.toolbar .toolbarLabel,
+.toolbar .toolbarField {
+  color: #fff !important;
+}
+.toolbar .toolbarField {
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.15) !important;
+}
+.toolbar .toolbarButton {
+  color: #fff !important;
+}
+
+/* Leave room at the bottom for our floating CTA */
+#viewerContainer {
+  padding-bottom: 70px !important;
+}

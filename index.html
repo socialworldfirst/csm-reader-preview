@@ -8,10 +8,8 @@
 <style>
 :root{
   --wf-red:#FF0051; --wf-red-hover:#E0004A;
-  --purple-deep:#13002D;
   --text:#1F2323; --text-secondary:#484F56; --text-muted:#69727D;
-  --bg:#FFFFFF; --bg-warm:#FAF9F5; --border:#ECEDEE;
-  --reader-bg:#3a3a3a;
+  --bg:#FFFFFF; --border:#ECEDEE;
   --sys:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
   --safe-top:env(safe-area-inset-top, 0px);
   --safe-bottom:env(safe-area-inset-bottom, 0px);
@@ -19,82 +17,60 @@
   --safe-left:env(safe-area-inset-left, 0px);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
-body{font-family:var(--sys);background:var(--reader-bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased;overscroll-behavior:none}
-a{color:inherit;text-decoration:none}
+html,body{height:100%;overflow:hidden;background:#1F2323}
+body{font-family:var(--sys);color:var(--text);-webkit-font-smoothing:antialiased;overscroll-behavior:none}
 button{font-family:var(--sys);cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+a{color:inherit;text-decoration:none}
 
-/* Dev banner — only shown if ?dev=1, off by default */
-.dev-banner{display:none;background:#1F2323;color:#fff;font-size:11.5px;text-align:center;padding:6px 12px;position:relative;z-index:50}
+/* Dev banner — opt-in via ?dev=1 */
+.dev-banner{display:none;background:#1F2323;color:#fff;font-size:11px;text-align:center;padding:5px 12px;position:fixed;top:0;left:0;right:0;z-index:50}
 .dev-banner b{color:#FF7AA8}
 .dev-banner a{color:#FF7AA8;text-decoration:underline;margin:0 3px}
 body.dev .dev-banner{display:block}
+body.dev .pdf-iframe{top:24px}
+body.dev .menu-btn,body.dev .nav-panel{top:calc(var(--safe-top) + 36px)}
 
-/* Reader area — fills viewport */
-.reader{position:absolute;inset:0;background:var(--reader-bg);overflow:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--safe-top) + 16px) 12px calc(var(--safe-bottom) + 80px);display:flex;justify-content:center;align-items:flex-start}
-body.dev .reader{top:auto;top:30px}
-.reader-canvas-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
-#pdf-canvas{display:block;box-shadow:0 12px 32px rgba(0,0,0,.5);background:#fff;max-width:100%;height:auto;border-radius:2px}
-.reader-state{color:rgba(255,255,255,.7);font-size:14px;text-align:center;padding:80px 20px;display:flex;flex-direction:column;align-items:center;gap:14px}
-.spinner{width:28px;height:28px;border:2.5px solid rgba(255,255,255,.18);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* PDF iframe fills viewport */
+.pdf-iframe{position:fixed;inset:0;width:100%;height:100%;border:none;background:#1F2323}
 
 /* Floating menu button — top-right */
-.menu-btn{position:fixed;top:calc(var(--safe-top) + 14px);right:calc(var(--safe-right) + 14px);width:44px;height:44px;background:rgba(255,255,255,.96);border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;color:var(--text);z-index:30;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .15s ease,background .15s ease}
-body.dev .menu-btn{top:calc(var(--safe-top) + 44px)}
+.menu-btn{position:fixed;top:calc(var(--safe-top) + 12px);right:calc(var(--safe-right) + 12px);width:42px;height:42px;background:rgba(255,255,255,.96);border-radius:50%;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;color:var(--text);z-index:30;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .15s ease,background .15s ease}
 .menu-btn:hover{background:#fff;transform:scale(1.04)}
 .menu-btn:active{transform:scale(.97)}
-.menu-btn svg{width:20px;height:20px}
+.menu-btn svg{width:18px;height:18px}
 .menu-btn .icon-close{display:none}
 body.menu-open .menu-btn .icon-menu{display:none}
 body.menu-open .menu-btn .icon-close{display:block}
 
-/* Backdrop when menu open */
 .backdrop{position:fixed;inset:0;background:rgba(0,0,0,0);pointer-events:none;transition:background .25s ease;z-index:20}
-body.menu-open .backdrop{background:rgba(0,0,0,.25);pointer-events:auto}
+body.menu-open .backdrop{background:rgba(0,0,0,.32);pointer-events:auto}
 
-/* Drop-down nav panel — slides from top-right */
-.nav-panel{position:fixed;top:calc(var(--safe-top) + 14px);right:calc(var(--safe-right) + 14px);width:min(340px,calc(100vw - 28px));max-height:calc(100vh - var(--safe-top) - var(--safe-bottom) - 40px);background:#fff;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.28);transform-origin:top right;transform:scale(.85) translateY(-10px);opacity:0;pointer-events:none;transition:transform .22s cubic-bezier(.2,.8,.3,1.1),opacity .18s ease;z-index:31;overflow:hidden;display:flex;flex-direction:column}
-body.dev .nav-panel{top:calc(var(--safe-top) + 44px)}
+/* Nav panel — slides from top-right */
+.nav-panel{position:fixed;top:calc(var(--safe-top) + 12px);right:calc(var(--safe-right) + 12px);width:min(320px,calc(100vw - 24px));max-height:calc(100vh - var(--safe-top) - var(--safe-bottom) - 36px);background:#fff;border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.32);transform-origin:top right;transform:scale(.85) translateY(-10px);opacity:0;pointer-events:none;transition:transform .22s cubic-bezier(.2,.8,.3,1.1),opacity .18s ease;z-index:31;overflow:hidden;display:flex;flex-direction:column}
 body.menu-open .nav-panel{transform:scale(1) translateY(0);opacity:1;pointer-events:auto}
-.nav-panel-head{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.nav-panel-head .logo{width:26px;height:26px;background:var(--wf-red);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
-.nav-panel-head .title{flex:1;min-width:0}
+.nav-panel-head{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.nav-panel-head .logo{width:24px;height:24px;background:var(--wf-red);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
 .nav-panel-head .title-name{font-weight:700;font-size:14px;color:var(--text)}
 .nav-panel-head .title-sub{font-size:11px;color:var(--text-muted);margin-top:1px}
 
-/* Page controls */
-.page-ctrls{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)}
-.page-ctrls button{width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:background .15s ease}
-.page-ctrls button:hover:not(:disabled){background:#F3F3F3;color:var(--text)}
-.page-ctrls button:disabled{opacity:.3;cursor:not-allowed}
-.page-ctrls button svg{width:16px;height:16px}
-.page-ctrls .page-input{width:54px;text-align:center;padding:6px;border:1px solid var(--border);border-radius:8px;font-family:ui-monospace,Menlo,Monaco,monospace;font-size:13px;color:var(--text);outline:none;background:#fff}
-.page-ctrls .page-input:focus{border-color:var(--wf-red)}
-.page-ctrls .page-total{color:var(--text-muted);font-family:ui-monospace,Menlo,Monaco,monospace;font-size:13px}
-.page-ctrls .divider{width:1px;height:22px;background:var(--border);margin:0 4px}
-
-/* Chapter list */
-.chapter-section-label{padding:14px 20px 6px;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-muted);font-weight:700}
-.chapter-list{flex:1;min-height:0;overflow-y:auto;padding:0 8px 14px}
-.chapter-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:8px;cursor:pointer;transition:background .12s ease;color:var(--text);font-size:14px}
+.chapter-section-label{padding:12px 18px 4px;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--text-muted);font-weight:700}
+.chapter-list{flex:1;min-height:0;overflow-y:auto;padding:0 8px 12px;-webkit-overflow-scrolling:touch}
+.chapter-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .12s ease;color:var(--text);font-size:14px}
 .chapter-item:hover{background:#F5F5F5}
 .chapter-item.active{background:#FFE9F1;color:var(--wf-red);font-weight:600}
 .chapter-item .ch-page{margin-left:auto;font-family:ui-monospace,Menlo,Monaco,monospace;font-size:11.5px;color:var(--text-muted)}
 .chapter-item.active .ch-page{color:var(--wf-red);opacity:.8}
 
 /* Floating CTA — small pill, bottom-right */
-.float-cta{position:fixed;bottom:calc(var(--safe-bottom) + 16px);right:calc(var(--safe-right) + 14px);background:var(--wf-red);color:#fff;font-weight:600;font-size:13.5px;padding:11px 16px 11px 18px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(255,0,81,.34),0 2px 6px rgba(0,0,0,.12);z-index:25;transition:all .2s ease;max-width:calc(100vw - 28px);text-decoration:none;cursor:pointer}
-.float-cta:hover{background:var(--wf-red-hover);transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,0,81,.42),0 2px 6px rgba(0,0,0,.12)}
+.float-cta{position:fixed;bottom:calc(var(--safe-bottom) + 14px);right:calc(var(--safe-right) + 12px);background:var(--wf-red);color:#fff;font-weight:600;font-size:13.5px;padding:11px 16px 11px 18px;border-radius:999px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(255,0,81,.42),0 2px 6px rgba(0,0,0,.18);z-index:25;transition:all .2s ease;max-width:calc(100vw - 24px);text-decoration:none;cursor:pointer}
+.float-cta:hover{background:var(--wf-red-hover);transform:translateY(-2px)}
 .float-cta:active{transform:translateY(0)}
 .float-cta svg{width:14px;height:14px;flex-shrink:0}
 .float-cta-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 @media(max-width:640px){
-  .menu-btn{width:42px;height:42px}
-  .float-cta{font-size:13px;padding:10px 14px 10px 16px;bottom:calc(var(--safe-bottom) + 14px);right:calc(var(--safe-right) + 12px)}
-  .nav-panel-head{padding:16px 18px 12px}
-  .page-ctrls{padding:12px 16px;gap:6px}
+  .menu-btn{width:40px;height:40px}
+  .float-cta{font-size:13px;padding:10px 14px 10px 16px}
 }
 </style>
 </head>
@@ -104,15 +80,7 @@ body.menu-open .nav-panel{transform:scale(1) translateY(0);opacity:1;pointer-eve
   DEV: <a href="?dev=1&chapter=guangzhou">guangzhou</a>·<a href="?dev=1&chapter=shenzhen">shenzhen</a>·<a href="?dev=1&chapter=foshan">foshan</a>·<a href="?dev=1&chapter=yiwu">yiwu</a>·<a href="?dev=1&chapter=canton-fair">canton-fair</a>·<a href="?dev=1&chapter=1688">1688</a>·<a href="?dev=1">default</a>
 </div>
 
-<div class="reader" id="reader">
-  <div class="reader-state" id="reader-loading">
-    <div class="spinner"></div>
-    <div>Loading the map…</div>
-  </div>
-  <div class="reader-canvas-wrap" id="canvas-wrap" style="display:none">
-    <canvas id="pdf-canvas"></canvas>
-  </div>
-</div>
+<iframe class="pdf-iframe" id="pdf-iframe" src="assets/pdfjs/web/viewer.html#zoom=page-width" title="China Sourcing Map" allow="fullscreen"></iframe>
 
 <div class="backdrop" id="backdrop"></div>
 
@@ -124,33 +92,11 @@ body.menu-open .nav-panel{transform:scale(1) translateY(0);opacity:1;pointer-eve
 <aside class="nav-panel" id="nav-panel" aria-label="Map navigation">
   <div class="nav-panel-head">
     <div class="logo">W</div>
-    <div class="title">
+    <div>
       <div class="title-name">China Sourcing Map</div>
       <div class="title-sub">WorldFirst · 328 pages</div>
     </div>
   </div>
-
-  <div class="page-ctrls">
-    <button id="btn-prev" title="Previous page" aria-label="Previous page">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <input id="page-input" class="page-input" type="text" value="1" inputmode="numeric" aria-label="Current page">
-    <span class="page-total">/ <span id="page-total">—</span></span>
-    <button id="btn-next" title="Next page" aria-label="Next page">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-    <span class="divider"></span>
-    <button id="btn-zoom-out" title="Zoom out" aria-label="Zoom out">
-      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/><path d="M8 11h6M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <button id="btn-zoom-in" title="Zoom in" aria-label="Zoom in">
-      <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/><path d="M8 11h6M11 8v6M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-    </button>
-    <button id="btn-fit" title="Fit to width" aria-label="Fit to width">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
-  </div>
-
   <div class="chapter-section-label">Jump to chapter</div>
   <div class="chapter-list" id="chapter-list"></div>
 </aside>
@@ -160,13 +106,8 @@ body.menu-open .nav-panel{transform:scale(1) translateY(0);opacity:1;pointer-eve
   <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </a>
 
-<script type="module">
-import * as pdfjsLib from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.min.mjs';
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.7.76/build/pdf.worker.min.mjs';
-
-/* ===== CHAPTER MAP — real page numbers from PDF =====
-   Each entry: page = jump target; cta = pithy floating-pill copy (3-5 words);
-   long_copy = the fuller version we kept for reference / future use. */
+<script>
+/* ===== CHAPTER MAP ===== */
 const CHAPTER_MAP = {
   "default":               { label:"The full map",          page:1,   cta:"Pay in yuan",          url_tag:"default" },
   "guangzhou":             { label:"Guangzhou",             page:36,  cta:"Pay factory direct",   url_tag:"guangzhou" },
@@ -189,81 +130,55 @@ const CHAPTER_MAP = {
 };
 const CTA_BASE = "https://www.worldfirst.com/uk/product/pay/pay-chinese-suppliers/?utm_source=csm&utm_medium=floatingcta&utm_campaign=csm_redistribution&utm_content=";
 
-/* ===== URL params + dev banner ===== */
 const params = new URLSearchParams(window.location.search);
-const chapter = (params.get('chapter') || 'default').toLowerCase();
-const cfg = CHAPTER_MAP[chapter] || CHAPTER_MAP['default'];
+const chapterKey = (params.get('chapter') || 'default').toLowerCase();
+const initialChapter = CHAPTER_MAP[chapterKey] || CHAPTER_MAP['default'];
 if (params.get('dev') === '1') document.body.classList.add('dev');
 
-/* ===== Floating CTA wiring ===== */
+const state = { pdfApp: null, activeChapter: chapterKey, currentPage: initialChapter.page };
+const iframe = document.getElementById('pdf-iframe');
 const ctaEl = document.getElementById('float-cta');
 const ctaTextEl = document.getElementById('float-cta-text');
-function syncCta(activeChapterKey) {
-  const c = CHAPTER_MAP[activeChapterKey] || CHAPTER_MAP['default'];
+
+/* ===== Set initial page via URL fragment ===== */
+iframe.src = `assets/pdfjs/web/viewer.html#page=${initialChapter.page}&zoom=page-width`;
+
+/* ===== CTA wiring ===== */
+function syncCta(key) {
+  const c = CHAPTER_MAP[key] || CHAPTER_MAP['default'];
   ctaTextEl.textContent = c.cta;
   ctaEl.setAttribute('href', CTA_BASE + c.url_tag);
 }
-syncCta(chapter);
+syncCta(chapterKey);
 ctaEl.addEventListener('click', () => {
   const c = CHAPTER_MAP[state.activeChapter] || CHAPTER_MAP['default'];
-  const eventData = { chapter: state.activeChapter, page: state.pageNum, cta: c.cta, destination: ctaEl.href };
+  const eventData = { chapter: state.activeChapter, page: state.currentPage, cta: c.cta, destination: ctaEl.href };
   console.log('[CSM CTA click]', eventData);
   if (typeof fbq !== 'undefined') fbq('trackCustom', 'CSM_FloatingCTA_Click', eventData);
   if (typeof gtag !== 'undefined') gtag('event', 'csm_floating_cta_click', eventData);
 });
 
-/* ===== PDF.js viewer ===== */
-const state = { pdf: null, pageNum: cfg.page, zoom: 1.0, fitWidth: true, rendering: false, queuedPage: null, activeChapter: chapter };
-const canvas = document.getElementById('pdf-canvas');
-const ctx = canvas.getContext('2d');
-const wrap = document.getElementById('canvas-wrap');
-const loading = document.getElementById('reader-loading');
-const pageInput = document.getElementById('page-input');
-const pageTotal = document.getElementById('page-total');
-const reader = document.getElementById('reader');
-
-async function loadPdf() {
-  try {
-    state.pdf = await pdfjsLib.getDocument('assets/csm.pdf').promise;
-    pageTotal.textContent = state.pdf.numPages;
-    loading.style.display = 'none';
-    wrap.style.display = 'flex';
-    if (state.pageNum > state.pdf.numPages) state.pageNum = 1;
-    await renderPage(state.pageNum);
-  } catch (e) {
-    loading.innerHTML = '<div>Couldn\'t load the map. <br><small style="opacity:.6">' + e.message + '</small></div>';
-    console.error(e);
-  }
-}
-
-async function renderPage(num) {
-  if (state.rendering) { state.queuedPage = num; return; }
-  state.rendering = true;
-  try {
-    const page = await state.pdf.getPage(num);
-    const availableWidth = reader.clientWidth - 24;
-    const baseViewport = page.getViewport({ scale: 1.0 });
-    let scale = state.fitWidth ? Math.min(availableWidth / baseViewport.width, 2.2) : state.zoom;
-    const viewport = page.getViewport({ scale });
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.floor(viewport.width * dpr);
-    canvas.height = Math.floor(viewport.height * dpr);
-    canvas.style.width = Math.floor(viewport.width) + 'px';
-    canvas.style.height = Math.floor(viewport.height) + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    await page.render({ canvasContext: ctx, viewport }).promise;
-    state.pageNum = num;
-    pageInput.value = num;
-    updateActiveChapterFromPage(num);
-  } finally {
-    state.rendering = false;
-    if (state.queuedPage !== null) {
-      const next = state.queuedPage; state.queuedPage = null; renderPage(next);
+/* ===== Listen to PDF.js page changes to auto-update active chapter ===== */
+iframe.addEventListener('load', () => {
+  const iWin = iframe.contentWindow;
+  // Wait for PDFViewerApplication to be ready
+  const tryHook = () => {
+    if (!iWin.PDFViewerApplication || !iWin.PDFViewerApplication.initializedPromise) {
+      setTimeout(tryHook, 80);
+      return;
     }
-  }
-}
+    iWin.PDFViewerApplication.initializedPromise.then(() => {
+      state.pdfApp = iWin.PDFViewerApplication;
+      // Listen for page changes
+      state.pdfApp.eventBus.on('pagechanging', e => {
+        state.currentPage = e.pageNumber;
+        updateActiveChapterFromPage(e.pageNumber);
+      });
+    });
+  };
+  tryHook();
+});
 
-/* Auto-update active chapter (and CTA) as user navigates between pages */
 function updateActiveChapterFromPage(num) {
   const sorted = Object.entries(CHAPTER_MAP)
     .filter(([k]) => k !== 'default')
@@ -282,44 +197,17 @@ function updateActiveChapterFromPage(num) {
   }
 }
 
-/* Controls */
-document.getElementById('btn-prev').onclick = () => { if (state.pageNum > 1) renderPage(state.pageNum - 1); };
-document.getElementById('btn-next').onclick = () => { if (state.pdf && state.pageNum < state.pdf.numPages) renderPage(state.pageNum + 1); };
-document.getElementById('btn-zoom-in').onclick = () => { state.fitWidth = false; state.zoom = Math.min(state.zoom * 1.2, 3.0); renderPage(state.pageNum); };
-document.getElementById('btn-zoom-out').onclick = () => { state.fitWidth = false; state.zoom = Math.max(state.zoom / 1.2, 0.4); renderPage(state.pageNum); };
-document.getElementById('btn-fit').onclick = () => { state.fitWidth = true; renderPage(state.pageNum); };
-pageInput.addEventListener('change', e => {
-  const n = parseInt(e.target.value, 10);
-  if (!isNaN(n) && state.pdf && n >= 1 && n <= state.pdf.numPages) renderPage(n);
-  else pageInput.value = state.pageNum;
-});
-
-/* Keyboard nav */
-window.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
-  if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); if (state.pageNum > 1) renderPage(state.pageNum - 1); }
-  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); if (state.pdf && state.pageNum < state.pdf.numPages) renderPage(state.pageNum + 1); }
-  if (e.key === 'Escape') closeMenu();
-});
-
-/* Resize redraw (debounced) */
-let resizeT;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeT);
-  resizeT = setTimeout(() => { if (state.pdf && state.fitWidth) renderPage(state.pageNum); }, 150);
-});
-
-/* ===== Menu open/close + chapter list ===== */
+/* ===== Menu open/close ===== */
 const menuBtn = document.getElementById('menu-btn');
-const navPanel = document.getElementById('nav-panel');
 const backdrop = document.getElementById('backdrop');
-function openMenu(){ document.body.classList.add('menu-open'); menuBtn.setAttribute('aria-label','Close menu'); }
-function closeMenu(){ document.body.classList.remove('menu-open'); menuBtn.setAttribute('aria-label','Open menu'); }
+const navPanel = document.getElementById('nav-panel');
+function closeMenu(){ document.body.classList.remove('menu-open'); }
 function toggleMenu(){ document.body.classList.toggle('menu-open'); }
 menuBtn.addEventListener('click', toggleMenu);
 backdrop.addEventListener('click', closeMenu);
+window.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 
-/* Populate chapter list */
+/* ===== Populate chapter list ===== */
 const chapterList = document.getElementById('chapter-list');
 const sortedChapters = Object.entries(CHAPTER_MAP).sort((a,b) => a[1].page - b[1].page);
 sortedChapters.forEach(([key, c]) => {
@@ -328,13 +216,15 @@ sortedChapters.forEach(([key, c]) => {
   item.dataset.key = key;
   item.innerHTML = `<span>${c.label}</span><span class="ch-page">p.${c.page}</span>`;
   item.addEventListener('click', () => {
-    if (state.pdf) renderPage(c.page);
+    if (state.pdfApp) {
+      state.pdfApp.page = c.page;  // PDF.js API — instant page jump, no reload
+    } else {
+      iframe.src = `assets/pdfjs/web/viewer.html#page=${c.page}&zoom=page-width`;
+    }
     closeMenu();
   });
   chapterList.appendChild(item);
 });
-
-loadPdf();
 </script>
 
 </body>
